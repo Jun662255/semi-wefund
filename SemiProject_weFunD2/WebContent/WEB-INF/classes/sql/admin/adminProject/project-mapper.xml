@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+<entry key="listCountAll">
+SELECT COUNT(*) COUNT
+FROM PROJECT
+</entry>
+<entry key="listCountY">
+SELECT COUNT(*) COUNT
+FROM PROJECT
+WHERE STATUS = 'Y'
+</entry>
+<entry key="listCountN">
+SELECT COUNT(*) COUNT
+FROM PROJECT
+WHERE STATUS = 'N'
+</entry>
+<entry key="listCountE">
+SELECT COUNT(*) COUNT
+FROM PROJECT
+WHERE STATUS = 'E'
+</entry>
+<entry key="listCountX">
+SELECT COUNT(*) COUNT
+FROM PROJECT
+WHERE STATUS = 'X'
+</entry>
+
+
+<entry key="selectAllListProject">
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+   SELECT PROJECT_NO,
+          NICKNAME,
+          PROJECT_NAME,
+          APPLY_DATE
+     FROM 
+          PROJECT P
+    JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+ ORDER BY PROJECT_NO DESC
+          )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ?     
+</entry>
+
+<entry key="selectYListProject">
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+   SELECT PROJECT_NO,
+          NICKNAME,
+          PROJECT_NAME,
+          APPLY_DATE
+     FROM 
+          PROJECT P
+    JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+    WHERE P.STATUS = 'Y'
+ ORDER BY PROJECT_NO DESC
+          )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ?  
+</entry>
+
+<entry key="selectNListProject">
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+   SELECT PROJECT_NO,
+          NICKNAME,
+          PROJECT_NAME,
+          APPLY_DATE
+     FROM 
+          PROJECT P
+    JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+    WHERE P.STATUS = 'N'
+ ORDER BY PROJECT_NO DESC
+          )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ?  
+</entry>
+
+<entry key="selectEListProject">
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+   SELECT PROJECT_NO,
+          NICKNAME,
+          PROJECT_NAME,
+          APPLY_DATE
+     FROM 
+          PROJECT P
+    JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+    WHERE P.STATUS = 'E'
+ ORDER BY PROJECT_NO DESC
+          )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ?  
+</entry>
+
+<entry key="selectXListProject">
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+   SELECT PROJECT_NO,
+          NICKNAME,
+          PROJECT_NAME,
+          APPLY_DATE
+     FROM 
+          PROJECT P
+    JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+    WHERE P.STATUS = 'X'
+ ORDER BY PROJECT_NO DESC
+          )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ?  
+</entry>
+<entry key="listCount">
+   	SELECT COUNT(*) COUNT
+	  FROM 
+	       (SELECT PROJECT_NO,
+			       PROJECT_NAME,
+			       PROJECT_CREATOR,
+			       END_DATE
+	          FROM    
+	               PROJECT
+			  JOIN (SELECT SUM(PAYMENT)A, PROJECT_NO
+			          FROM SUPPORT 
+			         GROUP BY PROJECT_NO) 
+			         USING (PROJECT_NO)    
+	 WHERE GOAL_AMOUNT  <![CDATA[ <= ]]> A
+	   AND STATUS = 'E')
+</entry>
+
+<entry key="ProjectSupportList">
+       SELECT *
+         FROM (SELECT ROWNUM RNUM, B.*
+                 FROM ( SELECT PROJECT_NO,
+		                       PROJECT_NAME,
+		                       NICKNAME,
+		                       END_DATE
+	                 	  FROM    
+                       	       PROJECT P
+	                      JOIN (SELECT SUM(PAYMENT)A, PROJECT_NO
+	                              FROM SUPPORT 
+	                             GROUP BY PROJECT_NO) 
+	                             USING (PROJECT_NO) 
+                   		  JOIN MEMBER ON (USER_NO = PROJECT_CREATOR)    
+         				 WHERE GOAL_AMOUNT  <![CDATA[ <= ]]> A
+          				   AND P.STATUS = 'E' ) B) 
+                WHERE 
+                      RNUM BETWEEN ? AND ?  
+                ORDER BY PROJECT_NO DESC     
+</entry>
+
+<entry key="SupportDetail">
+SELECT SUPPORT_NO,
+       ORDER_NAME,
+       ORDER_PHONE,
+       ORDER_EMAIL,
+       RECEIVER_NAME,
+       RECEIVER_PHONE,
+       RECEIVER_ADDRESS,
+       ORDER_COMMENT,
+       PRODUCT,
+       PAYMENT,
+       SUPPORT_DATE
+  FROM 
+       SUPPORT
+ WHERE PROJECT_NO = ?   
+</entry>
+
+
+
+
+
+
+</properties>

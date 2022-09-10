@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+<entry key="selectCountQna">
+	 SELECT COUNT(*) COUNT
+	 FROM QNA
+	 WHERE STATUS = 'Y'
+</entry>
+<entry key="selectlistQna">
+    SELECT * 
+      FROM (
+    SELECT ROWNUM RNUM, A.*
+      FROM (
+    SELECT QNA_NO,
+           QNA_TITLE,
+           NICKNAME,
+           QNA_DATE         	   
+	  FROM 
+	  	   QNA Q 
+	  JOIN	   
+	  	   MEMBER ON(QNA_WRITER = USER_NO)
+     WHERE
+     	   Q.STATUS = 'Y'
+  ORDER BY 
+           QNA_DATE DESC    
+           ) A)
+     WHERE 
+           RNUM BETWEEN ? AND ?
+</entry>
+<entry key=""></entry>
+
+</properties>

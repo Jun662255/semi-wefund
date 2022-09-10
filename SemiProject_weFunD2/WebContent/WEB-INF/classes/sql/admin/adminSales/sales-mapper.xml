@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<entry key="monthlyCategorySalesList">	
+	        SELECT SUM(A)SUMA, CATEGORY_NAME,CATEGORY_NO
+              FROM (SELECT *
+                      FROM (SELECT * 
+                              FROM PROJECT
+                              JOIN (SELECT PROJECT_NO, SUM(PAYMENT) A
+                                      FROM SUPPORT 
+                                     GROUP BY PROJECT_NO) USING(PROJECT_NO))
+                     WHERE GOAL_AMOUNT <![CDATA[ <= ]]> A 
+	                   AND STATUS = 'E'
+	                   AND SUBSTR(END_DATE, 1, 5)
+                      LIKE ?)
+             GROUP BY CATEGORY_NAME, CATEGORY_NO
+             ORDER BY CATEGORY_NO ASC
+	</entry>		
+	<entry key="monthlySales">
+            SELECT SUM(SUMA)MSUM, SUBSTR(D_E, 1, 5)DE
+              FROM (SELECT SUM(A)SUMA,END_DATE D_E
+                      FROM (SELECT *
+                              FROM (SELECT * 
+                                      FROM PROJECT
+                                      JOIN (SELECT PROJECT_NO, SUM(PAYMENT) A
+                                              FROM SUPPORT 
+                                             GROUP BY PROJECT_NO) USING(PROJECT_NO))
+                      		 WHERE GOAL_AMOUNT <![CDATA[ <= ]]> A 
+	                           AND STATUS = 'E'
+	                           AND SUBSTR(END_DATE, 1, 5)
+	                           NOT LIKE ?)                        
+                     GROUP BY CATEGORY_NAME, END_DATE                           
+                     ORDER BY END_DATE DESC)
+             GROUP BY SUBSTR(D_E, 1, 5)                  
+             ORDER BY DE DESC  
+	</entry>
+
+</properties>

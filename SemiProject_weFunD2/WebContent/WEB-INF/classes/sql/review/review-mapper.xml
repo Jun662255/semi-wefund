@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>리뷰 관련 쿼리문들</comment>
+	
+	<entry key="selectListCount">
+	    SELECT
+	    	   COUNT(*) COUNT
+          FROM 
+          	   REVIEW
+         WHERE
+          	   STATUS='Y'
+	</entry>
+
+	<entry key="selectReviewList">
+        SELECT *
+		  FROM (SELECT ROWNUM RNUM, A.*
+		          FROM (SELECT 
+		          			   REVIEW_NO,
+		          			   NICKNAME,
+		          			   SUPPORT_NO,
+		          			   REVIEW_TITLE,
+		          			   RATE,
+		          			   R.COUNT,
+		          			   REVIEW_DATE,
+		          			   PROJECT_NO,
+		          			   PROJECT_NAME,
+		          			   CONCAT(PA.FILE_PATH,PA.CHANGE_NAME) PROJECT_THUMBNAIL,
+                               REVIEW_IMG 
+		                  FROM 
+		                       REVIEW R
+                          JOIN MEMBER ON (REVIEW_WRITER = USER_NO)
+                          JOIN SUPPORT USING(SUPPORT_NO)
+		                  JOIN PROJECT USING(PROJECT_NO)
+		                  JOIN PROJECT_ATTACHMENT PA USING(PROJECT_NO)
+                          LEFT JOIN (SELECT REVIEW_NO, CONCAT(FILE_PATH,CHANGE_NAME) REVIEW_IMG
+                                       FROM REVIEW_ATTACHMENT
+                                      WHERE STATUS='Y') USING(REVIEW_NO)
+                         WHERE
+		                       FILE_LEVEL = 1
+		                   AND 
+		                   	   R.STATUS = 'Y'
+		              ORDER BY 
+		              		   REVIEW_DATE DESC) A)
+    	WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectUserSupportList">
+		SELECT
+			   SUPPORT_NO, PROJECT_NO, SUPPORT_DATE, PROJECT_NAME
+		  FROM 
+		  	   SUPPORT S
+		  JOIN 
+		  	   PROJECT USING(PROJECT_NO)
+		 WHERE 
+		 	   USER_NO = ?
+           AND 
+               SUPPORT_NO NOT IN(SELECT SUPPORT_NO
+                                   FROM REVIEW
+                                  WHERE REVIEW_WRITER = ?
+                                    AND STATUS = 'Y')
+           AND
+               S.STATUS = 'Y'
+      ORDER BY
+	  		   SUPPORT_DATE
+	</entry>
+	
+	<entry key="insertReview">
+		INSERT INTO REVIEW(REVIEW_NO, REVIEW_WRITER, SUPPORT_NO, REVIEW_TITLE, REVIEW_CONTENT, RATE)
+		VALUES(SEQ_RNO.NEXTVAL, ?, ?, ?, ?, ?)
+	</entry>
+	
+	<entry key="insertReviewAttachment">
+		INSERT INTO REVIEW_ATTACHMENT(FILE_NO, REVIEW_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+		VALUES (SEQ_RANO.NEXTVAL, SEQ_RNO.CURRVAL, ?, ?, ?)
+	</entry>
+
+	<entry key="insertNewReviewAttachment">
+		INSERT INTO REVIEW_ATTACHMENT(FILE_NO, REVIEW_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH)
+		VALUES (SEQ_RANO.NEXTVAL, ?, ?, ?, ?)
+	</entry>
+
+	<entry key="increaseCount">
+		UPDATE 
+			   REVIEW 
+		   SET
+		   	   COUNT = COUNT + 1 
+		 WHERE
+		 	   REVIEW_NO = ? 
+		   AND
+		 	   STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectReview">
+	 
+		SELECT 
+			   REVIEW_NO,
+			   NICKNAME,
+			   SUPPORT_NO,
+			   REVIEW_TITLE,
+			   REVIEW_CONTENT,
+			   RATE,
+			   R.COUNT,
+			   REVIEW_DATE,
+			   PROJECT_NO,
+			   PROJECT_NAME,
+			   CONCAT(FILE_PATH,CHANGE_NAME) PROJECT_THUMBNAIL
+		  FROM 
+		  	   REVIEW R
+		  JOIN 
+		       MEMBER ON (REVIEW_WRITER = USER_NO)
+		  JOIN 
+		       SUPPORT USING(SUPPORT_NO)
+		  JOIN 
+		       PROJECT USING(PROJECT_NO)
+		  JOIN
+		       PROJECT_ATTACHMENT USING(PROJECT_NO)
+		 WHERE 
+		       REVIEW_NO = ?
+		   AND
+		       R.STATUS = 'Y'
+		   AND
+		       FILE_LEVEL = 1
+	
+	</entry>
+	
+	<entry key="selectReviewAttachment">
+		SELECT
+			   FILE_NO,
+			   ORIGIN_NAME,
+			   CHANGE_NAME,
+			   FILE_PATH
+		  FROM
+		 	   REVIEW_ATTACHMENT
+		 WHERE 
+		 	   REVIEW_NO = ?
+		   AND
+		       STATUS = 'Y'
+	</entry>
+	
+	<entry key="updateReview">
+		UPDATE
+			   REVIEW
+		   SET
+		       REVIEW_TITLE = ?,
+		       REVIEW_CONTENT = ?,
+		       RATE = ? 
+		 WHERE
+		       REVIEW_NO = ?
+	</entry>
+	
+	<entry key="updateReviewAttachment">
+		UPDATE
+			   REVIEW_ATTACHMENT
+		   SET 
+		       ORIGIN_NAME = ?,
+		       CHANGE_NAME = ?,
+		       FILE_PATH = ?,
+		       STATUS='Y' 
+		 WHERE
+		       FILE_NO = ?
+	</entry>
+	
+	<entry key="deleteReviewAttachment">
+		UPDATE 
+			   REVIEW_ATTACHMENT 
+		   SET 
+		       STATUS = 'N' 
+		 WHERE 
+		       FILE_NO = ?
+	</entry>
+	
+	<entry key="selectReplyList">
+		SELECT
+			   REPLY_NO,
+			   NICKNAME,
+			   REPLY_CONTENT,
+			   REPLY_DATE 
+		  FROM 
+		  	   REPLY R
+		  JOIN
+		       MEMBER ON (REPLY_WRITER = USER_NO)
+		 WHERE 
+		 	   REVIEW_NO = ?
+		   AND
+		       R.STATUS IN ('Y', 'R')
+	</entry>
+
+	<entry key="insertReply">
+		INSERT INTO REPLY(REPLY_NO, REVIEW_NO, REPLY_WRITER, REPLY_CONTENT)
+		VALUES(SEQ_RRNO.NEXTVAL, ?, ?, ?)
+	</entry>
+
+	<entry key="deleteReview">
+		UPDATE
+			   REVIEW
+		   SET
+		       STATUS = 'N'
+		 WHERE
+		       REVIEW_NO = ?
+	</entry>
+	
+	<entry key="updateReply">
+		UPDATE 
+			   REPLY 
+		   SET 
+			   REPLY_CONTENT = ? 
+		 WHERE 
+		 	   REPLY_NO = ?
+	</entry>
+	
+	<entry key="deleteReply">
+		UPDATE
+			   REPLY 
+		   SET
+			   STATUS = 'N' 
+		 WHERE 
+		 	   REPLY_NO = ?
+	</entry>
+	
+	<entry key="insertReport">
+		INSERT INTO REPORT(REPLY_NO, REPLY_REPORTER) 
+		VALUES(?, ?)
+	</entry>
+
+	<entry key="updateReplyStatusR">
+		UPDATE 
+			   REPLY 
+		   SET 
+			   STATUS = 'R' 
+		 WHERE 
+			   REPLY_NO = ?
+	</entry>
+</properties>

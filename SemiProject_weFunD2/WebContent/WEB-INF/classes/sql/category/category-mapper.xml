@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>카테고리 관련 쿼리문</comment>
+	
+	<entry key="selectTechyList">
+		SELECT PROJECT_NO, NICKNAME, PROJECT_NAME, CATEGORY_NAME, FLOOR((END_DATE - SYSDATE)) AS DDAY , GOAL_AMOUNT, PAYMENTSUM, FILE_PATH||CHANGE_NAME
+		  FROM PROJECT P
+		  JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+		  JOIN MEMBER ON(USER_NO = PROJECT_CREATOR)
+		  LEFT JOIN(
+    				SELECT PROJECT_NO,SUM(PAYMENT) PAYMENTSUM
+    			      FROM SUPPORT
+    				 GROUP BY  PROJECT_NO
+					)
+		 USING (PROJECT_NO)
+		 WHERE P.STATUS = 'Y'
+		   AND FILE_LEVEL = 1
+		   AND P.CATEGORY_NO = ?
+		 ORDER BY START_DATE DESC
+	</entry>
+	
+	
+	
+	
+</properties>

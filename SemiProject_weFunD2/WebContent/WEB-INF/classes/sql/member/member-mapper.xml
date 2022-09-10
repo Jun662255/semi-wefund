@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>회원 관련 쿼리들</comment>
+	
+	<entry key="loginMember">
+		SELECT 
+				USER_NO,
+				USER_ID,
+				USER_PWD,
+				USER_NAME,
+				NICKNAME,
+				PHONE,
+				ENROLL_DATE,
+				MODIFY_DATE,
+				STATUS
+			FROM
+				MEMBER
+		   WHERE
+		   		USER_ID = ?
+		   	 AND
+		   		USER_PWD = ?
+		   	 AND
+		   		STATUS = 'Y'
+	</entry>
+	<entry key="signUp">
+		
+		INSERT
+		  INTO
+				MEMBER
+				(
+				 USER_NO,
+				 USER_ID,
+				 USER_PWD,
+				 USER_NAME,
+				 NICKNAME,
+				 PHONE
+				)
+	   	VALUES
+	   			(
+	   			 SEQ_UNO.NEXTVAL,
+	   			 ?,
+	   			 ?,
+	   			 ?,
+	   			 ?,
+	   			 ?
+	   			)
+		
+	</entry>
+	
+	<entry key="idCheck">
+		SELECT USER_ID 
+		  FROM MEMBER 
+		 WHERE USER_ID = ?
+	</entry>
+	
+	<entry key="nicknameCheck">
+		SELECT NICKNAME 
+		  FROM MEMBER 
+		 WHERE NICKNAME = ?
+	</entry>
+	
+	<entry key="findUserId">
+		SELECT USER_ID
+		  FROM MEMBER
+		 WHERE USER_NAME = ?
+		   AND PHONE = ?
+	</entry>
+	
+	<entry key="findUserPwd">
+		SELECT USER_ID 
+		  FROM MEMBER 
+		 WHERE USER_ID = ?
+	</entry>
+	
+	<entry key="setUserPwd">
+		UPDATE MEMBER 
+		SET USER_PWD = ?
+		WHERE USER_ID = ?
+	</entry>
+	<entry key="updateMember">
+		UPDATE MEMBER
+		   SET NICKNAME =?,
+			   PHONE = ?,
+			   MODIFY_DATE = SYSDATE
+		 WHERE USER_ID = ?
+		   AND STATUS = 'Y' 
+	</entry>
+	<entry key="selectMember">
+	SELECT USER_NO,
+		   USER_ID,
+		   USER_PWD,
+		   USER_NAME,
+		   NICKNAME,
+		   PHONE,
+		   ENROLL_DATE,
+		   MODIFY_DATE,
+		   STATUS 
+	  FROM
+	 	   MEMBER
+	 WHERE 
+	       USER_ID = ?
+	   AND STATUS = 'Y' 
+	</entry>
+	<entry key="updatePwdMember">
+	UPDATE MEMBER
+	   SET USER_PWD = ?,
+	   	   MODIFY_DATE = SYSDATE
+	 WHERE USER_PWD = ?
+	   AND USER_ID =? 
+	</entry>
+	<entry key="deleteMember">
+	UPDATE MEMBER
+	   SET STATUS = 'N',
+	       MODIFY_DATE = SYSDATE
+	 WHERE USER_ID = ? 
+	 </entry>
+
+	<entry key="nickNameCheck">
+	SELECT COUNT(*)
+	  FROM MEMBER 
+	 WHERE NICKNAME = ? 
+	</entry>
+
+
+</properties>

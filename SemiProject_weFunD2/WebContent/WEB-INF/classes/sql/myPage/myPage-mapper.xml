@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>마이페이지 관련 쿼리문들</comment>
+
+	
+	<entry key="selectMyLikeList">
+		SELECT *
+		  FROM
+		  		(SELECT ROWNUM RNUM, A.*
+				   FROM	(SELECT CATEGORY_NAME, PROJECT_NO, P.STATUS, PROJECT_NAME, END_DATE, FILE_PATH||CHANGE_NAME TITLEIMG
+						   FROM PROJECT P
+						   JOIN LIKES USING (PROJECT_NO)
+						   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+						  WHERE USER_NO = ?
+							AND  P.STATUS IN('Y', 'E')
+							AND FILE_LEVEL = 1
+					      ORDER BY LIKE_DATE DESC) A)
+		 WHERE
+		 		RNUM BETWEEN ? AND ?
+		
+	</entry>
+	
+	<entry key="selectLikeListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				LIKES
+		 WHERE 
+				USER_NO = ?
+	</entry>
+	
+	<entry key="selectMyFundingListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				LIKES
+		  JOIN 
+		  		PROJECT P USING (PROJECT_NO)
+		 WHERE 
+				USER_NO = ?
+		  AND
+		  		P.STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectMyCompleteListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				LIKES
+		  JOIN 
+		  		PROJECT P USING (PROJECT_NO)
+		 WHERE 
+				USER_NO = ?
+		  AND
+		  		P.STATUS = 'E'
+	</entry>
+	
+	<entry key="selectSupportListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				SUPPORT
+		 WHERE 
+		 		USER_NO = ?
+	</entry>
+	
+	<entry key="selectSuccessPaymentListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				SUPPORT
+		 WHERE 
+		 		USER_NO = ?
+		   AND	
+		   		STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectPaymentReservationListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				SUPPORT
+		 WHERE 
+		 		USER_NO = ?
+		   AND	
+		   		STATUS = 'N'
+	</entry>
+	
+	<entry key="selectPaymentFailedListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				SUPPORT
+		 WHERE 
+		 		USER_NO = ?
+		   AND	
+		   		STATUS = 'F'
+	</entry>
+	
+	
+	<entry key="selectMySupportList">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+         		   FROM (SELECT SUPPORT_NO,PROJECT_NO, CATEGORY_NAME, PROJECT_NAME, P.STATUS PS, S.STATUS SS, SUPPORT_DATE, FILE_PATH||CHANGE_NAME TITLEIMG
+		                   FROM SUPPORT S
+		                   JOIN PROJECT P USING (PROJECT_NO)
+		                   JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+		                  WHERE USER_NO = ?
+		                    AND P.STATUS IN('Y', 'E')
+		                    AND FILE_LEVEL = 1
+		                  ORDER BY SUPPORT_DATE DESC) A)
+ 		 WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectProjectListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				PROJECT
+		 WHERE 
+		 		PROJECT_CREATOR = ?
+	</entry>
+	
+	<entry key="selectProjectWaitingListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				PROJECT
+		 WHERE 
+		 		PROJECT_CREATOR = ?
+		   AND
+		   		STATUS = 'N'
+	</entry>
+	
+	<entry key="selectEndProjectListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				PROJECT
+		 WHERE 
+		 		PROJECT_CREATOR = ?
+		   AND
+		   		STATUS = 'E'
+	</entry>
+	
+	<entry key="selectApprovedProjectListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				PROJECT
+		 WHERE 
+		 		PROJECT_CREATOR = ?
+		   AND
+		   		STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectCompanionProjectListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				PROJECT
+		 WHERE 
+		 		PROJECT_CREATOR = ?
+		   AND
+		   		STATUS = 'X'
+	</entry>
+	
+	<entry key="selectMyProjectList">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+                   FROM (SELECT PROJECT_NO, PROJECT_CREATOR, CATEGORY_NAME, P.STATUS, PROJECT_NAME, GOAL_AMOUNT, 
+       							FILE_PATH||CHANGE_NAME TITLEIMG, PAYMENTSUM
+				   		   FROM PROJECT P 
+				   		   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+				   		   LEFT JOIN(SELECT PROJECT_NO,SUM(PAYMENT) PAYMENTSUM, S.STATUS
+					           		   FROM SUPPORT S
+					          		  GROUP BY PROJECT_NO, S.STATUS) USING (PROJECT_NO)
+				  		  WHERE PROJECT_CREATOR = ?
+				    		AND FILE_LEVEL = 1
+				 		  ORDER BY APPLY_DATE DESC) A)
+         WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectMyProject">
+		SELECT  
+				PROJECT_NO,
+				PROJECT_NAME, 
+				CATEGORY_NAME, 
+				START_DATE, 
+				END_DATE, 
+				GOAL_AMOUNT, 
+				BANK, 
+				ACCOUNT_NO, 
+				ACCOUNT_NAME, 
+				PROJECT_CONTENT, 
+				APPLY_DATE, 
+				STATUS
+		 FROM 
+				PROJECT
+		WHERE 
+				PROJECT_NO = ?
+	</entry>
+	
+	<entry key="selectMyProduct">
+		SELECT 
+				PRODUCT_NO, 
+				PRODUCT_NAME, 
+				PRICE
+		  FROM 
+		  		PRODUCT
+		 WHERE 
+		 		PROJECT_NO = ?
+	</entry>
+	
+	<entry key="selectMyReviewListCount">
+		SELECT 
+				COUNT(*) COUNT
+		  FROM 
+				REVIEW
+		 WHERE 
+		 		REVIEW_WRITER = ?
+	</entry>
+	
+	<entry key="selectMyReviewList">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+                   FROM (SELECT REVIEW_NO, PROJECT_NO, SUPPORT_NO, REVIEW_TITLE, REVIEW_WRITER, USER_NAME, REVIEW_DATE, 
+                   				FILE_PATH||CHANGE_NAME TITLEIMG
+						   FROM REVIEW R
+						   JOIN MEMBER ON (REVIEW_WRITER = USER_NO)
+                           JOIN SUPPORT S USING(SUPPORT_NO)
+						   JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+						  WHERE REVIEW_WRITER = ?
+						    AND R.STATUS = 'Y'
+                            AND FILE_LEVEL = 1
+						  ORDER BY REVIEW_DATE DESC) A)
+         WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectMyFundingList">
+		SELECT *
+		  FROM
+		  		(SELECT ROWNUM RNUM, A.*
+				   FROM	(SELECT CATEGORY_NAME, PROJECT_NO, P.STATUS, PROJECT_NAME, END_DATE, FILE_PATH||CHANGE_NAME TITLEIMG
+						   FROM PROJECT P
+						   JOIN LIKES USING (PROJECT_NO)
+						   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+						  WHERE USER_NO = ?
+							AND  P.STATUS = 'Y'
+							AND FILE_LEVEL = 1
+					      ORDER BY LIKE_DATE DESC) A)
+		 WHERE
+		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectCompleteList">
+		SELECT *
+		  FROM
+		  		(SELECT ROWNUM RNUM, A.*
+				   FROM	(SELECT CATEGORY_NAME, PROJECT_NO, P.STATUS, PROJECT_NAME, END_DATE, FILE_PATH||CHANGE_NAME TITLEIMG
+						   FROM PROJECT P
+						   JOIN LIKES USING (PROJECT_NO)
+						   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+						  WHERE USER_NO = ?
+							AND  P.STATUS = 'E'
+							AND FILE_LEVEL = 1
+					      ORDER BY LIKE_DATE DESC) A)
+		 WHERE
+		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectMyAttachmentList">
+		SELECT
+				FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, FILE_LEVEL
+		  FROM 
+		  		PROJECT_ATTACHMENT
+		 WHERE
+		 		PROJECT_NO = ?
+	</entry>
+	
+	<entry key="selectMyWaitingList">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+                   FROM (SELECT PROJECT_NO, PROJECT_CREATOR, CATEGORY_NAME, P.STATUS, PROJECT_NAME, GOAL_AMOUNT, 
+       					FILE_PATH||CHANGE_NAME TITLEIMG, PAYMENTSUM
+				   FROM PROJECT P 
+				   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+				   LEFT JOIN(
+					     	  SELECT PROJECT_NO,SUM(PAYMENT) PAYMENTSUM, S.STATUS
+					            FROM SUPPORT S
+					           GROUP BY PROJECT_NO, S.STATUS
+					          HAVING S.STATUS = 'Y'
+					         ) 
+					         USING (PROJECT_NO)
+				  WHERE PROJECT_CREATOR = ?
+				  	AND P.STATUS = 'N'
+				    AND FILE_LEVEL = 1
+				  ORDER BY APPLY_DATE DESC) A)
+         WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectMyEndingList">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+                   FROM (SELECT PROJECT_NO, PROJECT_CREATOR, CATEGORY_NAME, P.STATUS, PROJECT_NAME, GOAL_AMOUNT, 
+       					FILE_PATH||CHANGE_NAME TITLEIMG, PAYMENTSUM
+				   FROM PROJECT P 
+				   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+				   LEFT JOIN(
+					     	  SELECT PROJECT_NO,SUM(PAYMENT) PAYMENTSUM, S.STATUS
+					            FROM SUPPORT S
+					           GROUP BY PROJECT_NO, S.STATUS) 
+					         USING (PROJECT_NO)
+				  WHERE PROJECT_CREATOR = ?
+				  	AND P.STATUS = 'E'
+				    AND FILE_LEVEL = 1
+				  ORDER BY APPLY_DATE DESC) A)
+         WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectMyApprovedList">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+                   FROM (SELECT PROJECT_NO, PROJECT_CREATOR, CATEGORY_NAME, P.STATUS, PROJECT_NAME, GOAL_AMOUNT, 
+       					FILE_PATH||CHANGE_NAME TITLEIMG, PAYMENTSUM
+				   FROM PROJECT P 
+				   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+				   LEFT JOIN(
+					     	  SELECT PROJECT_NO,SUM(PAYMENT) PAYMENTSUM, S.STATUS
+					            FROM SUPPORT S
+					           GROUP BY PROJECT_NO, S.STATUS) USING (PROJECT_NO)
+				  WHERE PROJECT_CREATOR = ?
+				  	AND P.STATUS = 'Y'
+				    AND FILE_LEVEL = 1
+				  ORDER BY APPLY_DATE DESC) A)
+         WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectMyCompanionList">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+                   FROM (SELECT PROJECT_NO, PROJECT_CREATOR, CATEGORY_NAME, P.STATUS, PROJECT_NAME, GOAL_AMOUNT, 
+       					FILE_PATH||CHANGE_NAME TITLEIMG, PAYMENTSUM
+				   FROM PROJECT P 
+				   JOIN PROJECT_ATTACHMENT USING (PROJECT_NO)
+				   LEFT JOIN(
+					     	  SELECT PROJECT_NO,SUM(PAYMENT) PAYMENTSUM, S.STATUS
+					            FROM SUPPORT S
+					           GROUP BY PROJECT_NO, S.STATUS
+					          HAVING S.STATUS = 'Y'
+					         ) 
+					         USING (PROJECT_NO)
+				  WHERE PROJECT_CREATOR = ?
+				  	AND P.STATUS = 'X'
+				    AND FILE_LEVEL = 1
+				  ORDER BY APPLY_DATE DESC) A)
+         WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectSuccessPayment">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+         		   FROM (SELECT SUPPORT_NO,PROJECT_NO, CATEGORY_NAME, PROJECT_NAME, P.STATUS PS, S.STATUS SS, SUPPORT_DATE, FILE_PATH||CHANGE_NAME TITLEIMG
+		                   FROM SUPPORT S
+		                   JOIN PROJECT P USING (PROJECT_NO)
+		                   JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+		                  WHERE USER_NO = ?
+		                    AND P.STATUS IN('Y', 'E')
+		                    AND S.STATUS = 'Y'
+		                    AND FILE_LEVEL = 1
+		                  ORDER BY SUPPORT_DATE DESC) A)
+ 		 WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectPaymentReservation">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+         		   FROM (SELECT SUPPORT_NO,PROJECT_NO, CATEGORY_NAME, PROJECT_NAME, P.STATUS PS, S.STATUS SS, SUPPORT_DATE, FILE_PATH||CHANGE_NAME TITLEIMG
+		                   FROM SUPPORT S
+		                   JOIN PROJECT P USING (PROJECT_NO)
+		                   JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+		                  WHERE USER_NO = ?
+		                    AND P.STATUS IN('Y', 'E')
+		                    AND S.STATUS = 'N'
+		                    AND FILE_LEVEL = 1
+		                  ORDER BY SUPPORT_DATE DESC) A)
+ 		 WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectPaymentFailed">
+		SELECT *
+  		  FROM 
+  		  		(SELECT ROWNUM RNUM, A.*
+         		   FROM (SELECT SUPPORT_NO,PROJECT_NO, CATEGORY_NAME, PROJECT_NAME, P.STATUS PS, S.STATUS SS, SUPPORT_DATE, FILE_PATH||CHANGE_NAME TITLEIMG
+		                   FROM SUPPORT S
+		                   JOIN PROJECT P USING (PROJECT_NO)
+		                   JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+		                  WHERE USER_NO = ?
+		                    AND P.STATUS IN('Y', 'E')
+		                    AND S.STATUS = 'F'
+		                    AND FILE_LEVEL = 1
+		                  ORDER BY SUPPORT_DATE DESC) A)
+ 		 WHERE 
+ 		 		RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="updateMyProject">
+		UPDATE
+				PROJECT
+		   SET
+		   		PROJECT_NAME = ?,
+		   		PROJECT_CONTENT = ?
+		 WHERE
+		 		PROJECT_NO = ?
+	</entry>
+	
+	<entry key="updateAttachment">
+		UPDATE
+				PROJECT_ATTACHMENT
+		   SET
+		   		ORIGIN_NAME = ?,
+		   		CHANGE_NAME = ?,
+		   		FILE_PATH = ?,
+		   		UPLOAD_DATE =  SYSDATE
+		 WHERE
+		 		FILE_NO = ?
+		   AND
+		   		FILE_LEVEL = ?
+	</entry>
+	
+	<entry key="insertNewAttachment">
+		INSERT INTO
+	  	PROJECT_ATTACHMENT (FILE_NO,
+	  				 		PROJECT_NO,
+	  				 		ORIGIN_NAME,
+	  				 		CHANGE_NAME,
+	  				 		FILE_PATH,
+	  				 		FILE_LEVEL)
+	  	VALUES (SEQ_PANO.NEXTVAL, ?, ?, ?, ?, ?)
+	</entry>
+	<entry key="selectSupportDetail">
+
+        SELECT SUPPORT_DATE, FILE_PATH||CHANGE_NAME, PROJECT_NAME, PRODUCT, PAYMENT, S.STATUS AS STA, RECEIVER_NAME, RECEIVER_PHONE, RECEIVER_ADDRESS, ORDER_NAME, ORDER_PHONE
+          FROM SUPPORT S
+          JOIN PROJECT USING(PROJECT_NO)
+          JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+          JOIN MEMBER USING(USER_NO)
+         WHERE USER_ID = ?
+           AND PROJECT_NO = ?
+
+    </entry>
+	
+	
+</properties>

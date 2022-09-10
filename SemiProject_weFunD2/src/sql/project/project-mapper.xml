@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>프로젝트 관련 쿼리문</comment>
+	
+	<entry key="insertProject">
+	INSERT INTO PROJECT (PROJECT_NO, PROJECT_CREATOR, PROJECT_NAME, CATEGORY_NO, CATEGORY_NAME,END_DATE
+                    ,GOAL_AMOUNT, BANK, ACCOUNT_NO, ACCOUNT_NAME, PROJECT_CONTENT)
+    VALUES(SEQ_PJNO.NEXTVAL,?,?,?,?,?,?,?,?,?,?)
+	</entry>
+
+	<entry key="insertProjectAttachmentList">
+	INSERT INTO PROJECT_ATTACHMENT (FILE_NO, PROJECT_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, FILE_LEVEL)
+	VALUES(SEQ_PANO.NEXTVAL, SEQ_PJNO.CURRVAL,?,?,?,?)
+	</entry>
+	
+	
+	<entry key="insertProduct">
+	INSERT INTO PRODUCT (PRODUCT_NO, PROJECT_NO, PRODUCT_NAME, PRICE)
+	VALUES(SEQ_PDNO.NEXTVAL, SEQ_PJNO.CURRVAL, ?, ?)  
+	</entry>
+	
+	<entry key="selectProjectListCount">
+	    SELECT COUNT(*) COUNT
+                FROM PROJECT
+            WHERE STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectProjectList">
+         		 SELECT * 
+			FROM(SELECT ROWNUM RNUM, A.*
+			FROM(SELECT PROJECT_NO, USER_ID, NICKNAME, PROJECT_NAME, CATEGORY_NAME, GOAL_AMOUNT,END_DATE, FILE_PATH || CHANGE_NAME TITLEIMG, PAYMENTSUM,START_DATE, FLOOR((END_DATE - SYSDATE)) AS DDAY, COUNT, (PAYMENTSUM/GOAL_AMOUNT)*100 RATE
+			FROM PROJECT P
+            JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+			JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+            LEFT JOIN(
+             SELECT PROJECT_NO,SUM(PAYMENT)PAYMENTSUM
+            FROM SUPPORT
+            GROUP BY  PROJECT_NO
+            )USING (PROJECT_NO)
+			 WHERE P.STATUS = 'Y'
+			 AND FILE_LEVEL = 1
+			ORDER BY PROJECT_NO DESC) A)
+			WHERE RNUM BETWEEN ? AND ?
+	</entry>
+
+	<entry key="increaseCount">
+			UPDATE PROJECT SET COUNT = COUNT + 1
+			WHERE PROJECT_NO = ?
+	</entry>
+	
+	<entry key="selectProject">
+    SELECT PROJECT_NO, PROJECT_CREATOR, USER_ID, NICKNAME, PROJECT_NAME, CATEGORY_NO, CATEGORY_NAME, START_DATE, END_DATE,
+        GOAL_AMOUNT, PROJECT_CONTENT, COUNT, APPLY_DATE ,PAYMENT, P.STATUS
+        FROM PROJECT P
+        JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+        LEFT JOIN SUPPORT USING(PROJECT_NO)
+    WHERE PROJECT_NO = ?
+	</entry>
+	
+	
+	<entry key="selectProduct">
+	SELECT PRODUCT_NO, PRODUCT_NAME, PRICE
+	FROM PRODUCT
+	WHERE PROJECT_NO = ?
+	</entry>
+	
+	
+	<entry key="selectProjectAttachment">
+	SELECT FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH
+		FROM PROJECT_ATTACHMENT
+	WHERE PROJECT_NO = ?
+	</entry>
+	
+	
+	<entry key="projectSearchList">
+           	SELECT * 
+		FROM(SELECT ROWNUM RNUM, A.*
+		FROM(SELECT PROJECT_NO, USER_ID, NICKNAME, PROJECT_NAME, CATEGORY_NAME, GOAL_AMOUNT, END_DATE, FILE_PATH || CHANGE_NAME TITLEIMG, PAYMENTSUM,START_DATE, FLOOR((END_DATE - SYSDATE)) AS DDAY, COUNT, FILE_PATH||CHANGE_NAME, (PAYMENTSUM/GOAL_AMOUNT)*100 RATE
+		FROM PROJECT P
+		JOIN MEMBER ON (PROJECT_CREATOR = USER_NO)
+		JOIN PROJECT_ATTACHMENT USING(PROJECT_NO)
+          LEFT JOIN(
+             SELECT PROJECT_NO,SUM(PAYMENT)PAYMENTSUM
+            FROM SUPPORT
+            GROUP BY  PROJECT_NO
+            )USING (PROJECT_NO)
+		 WHERE P.STATUS = 'Y'
+		 AND PROJECT_NAME LIKE ?
+		 AND FILE_LEVEL = 1
+		ORDER BY PROJECT_NO DESC) A)
+		
+		
+		
+		
+	</entry>
+	
+	
+	<entry key="insertSupport">
+	INSERT INTO SUPPORT (SUPPORT_NO,USER_NO,PROJECT_NO,ORDER_NAME,ORDER_PHONE,ORDER_EMAIL,
+                        RECEIVER_NAME,RECEIVER_PHONE,RECEIVER_ADDRESS,ORDER_COMMENT,
+                        PRODUCT,PAYMENT)
+    VALUES(SEQ_SNO.NEXTVAL,?,?,?,?,?,?,?,?,?,?,?)
+	</entry>
+	
+	
+	<entry key="sumPayment">
+	SELECT SUM(PAYMENT) PAYMENT
+	FROM SUPPORT
+	GROUP BY (PROJECT_NO)
+	HAVING PROJECT_NO = ?
+	</entry>
+	
+	<entry key="allowProject">
+	UPDATE PROJECT SET STATUS = 'Y',
+	START_DATE = SYSDATE
+	
+	WHERE PROJECT_NO = ?
+	</entry>
+	
+	
+	
+	
+	
+	
+	<entry key="returnProject">
+	UPDATE PROJECT SET STATUS = 'X'
+	WHERE PROJECT_NO = ?
+	</entry>
+	
+	<entry key="selectLike">
+	SELECT COUNT(*)COUNT
+	FROM LIKES
+	WHERE PROJECT_NO = ?
+	AND USER_NO = ?
+	</entry>
+	
+	<entry key="deleteLike">
+	DELETE FROM LIKES
+	WHERE PROJECT_NO = ?
+	AND USER_NO = ?
+	</entry>
+	
+	<entry key="insertLike">
+	INSERT INTO LIKES
+	VALUES(?, ?, SYSDATE)
+
+	</entry>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</properties>

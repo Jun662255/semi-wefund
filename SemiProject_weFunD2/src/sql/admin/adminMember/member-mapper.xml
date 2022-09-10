@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+<entry key="listcount">
+SELECT COUNT(*) COUNT
+FROM MEMBER
+WHERE STATUS ='Y'
+</entry>
+
+<entry key="selectListMember">
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+   SELECT USER_NO,
+          USER_ID,
+          USER_PWD,
+          USER_NAME,
+          NICKNAME,
+          PHONE,
+          ENROLL_DATE,
+          MODIFY_DATE
+     FROM MEMBER 
+    WHERE STATUS = 'Y'
+ ORDER BY USER_NO DESC
+          )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ?  
+</entry>
+
+<entry key="withdrawalListCountMember">
+	SELECT COUNT(*) COUNT
+	FROM MEMBER
+	WHERE STATUS ='N'
+</entry>
+<entry key="withdrawalselectListMember">
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+   SELECT USER_NO,
+          USER_ID,
+          USER_PWD,
+          USER_NAME,
+          NICKNAME,
+          PHONE,
+          ENROLL_DATE,
+          MODIFY_DATE
+     FROM MEMBER 
+    WHERE STATUS = 'N'
+ ORDER BY USER_NO DESC
+          )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ?  
+</entry>
+
+<entry key="restorationMember">
+UPDATE MEMBER
+   SET STATUS = 'Y',
+       MODIFY_DATE = SYSDATE
+ WHERE USER_NO = ? 
+</entry>
+
+<entry key="listCountReportMember">
+	SELECT COUNT(*) COUNT
+	FROM REPORT
+</entry>
+
+
+<entry key="selectListReportMember">
+
+    SELECT *
+      FROM ( 
+   SELECT ROWNUM RNUM, A.*
+     FROM
+          (  
+ SELECT 
+        R.REPLY_NO R1,
+        REVIEW_TITLE,
+        M2.NICKNAME N2,
+        REPLY_DATE,
+        REPLY_CONTENT,      
+        M1.NICKNAME N1,
+        REPORT_DATE,
+        RV.REVIEW_NO
+   FROM
+        REPLY R, REPORT RP , REVIEW RV , MEMBER M1, MEMBER M2 
+  WHERE  
+       RP.REPLY_NO = R.REPLY_NO
+   AND R.REVIEW_NO = RV.REVIEW_NO
+   AND RP.REPLY_REPORTER = M1.USER_NO
+   AND R.REPLY_WRITER = M2.USER_NO
+   AND R.STATUS = 'R'      
+  ORDER BY REPORT_DATE DESC
+            )A
+          )
+    WHERE 
+          RNUM BETWEEN ? AND ? 
+</entry>
+
+<entry key="suspensionMember">
+UPDATE MEMBER SET  STATUS ='N',MODIFY_DATE=SYSDATE WHERE NICKNAME = ?
+</entry>
+
+<entry key="checkMember">
+UPDATE REPLY SET STATUS ='Y' WHERE REPLY_NO = ?
+</entry>
+
+<entry key="replystatusN">
+UPDATE REPLY SET STATUS ='N' WHERE REPLY_NO = ?
+</entry>
+
+</properties>

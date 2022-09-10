@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+	<entry key="listCountReview">
+   SELECT COUNT(*) COUNT
+	 FROM REVIEW
+	WHERE STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectList">
+	 SELECT * 
+       FROM (
+     SELECT 
+            ROWNUM RNUM, A.*
+       FROM (
+     SELECT REVIEW_NO,
+            NICKNAME,
+            SUPPORT_NO,
+            REVIEW_TITLE,
+            RATE,
+            COUNT,
+            REVIEW_DATE
+       FROM 
+            REVIEW R
+       JOIN 
+            MEMBER ON(USER_NO = REVIEW_WRITER)
+      WHERE 
+            R.STATUS = 'Y'
+   ORDER BY 
+            REVIEW_NO DESC)A)
+      WHERE 
+            RNUM BETWEEN ? AND ?
+	
+	</entry> 
+	
+</properties>

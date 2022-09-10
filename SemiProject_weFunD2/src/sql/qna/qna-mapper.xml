@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>QnA 관련 쿼리문들</comment>
+	
+	<entry key="selectListCount">
+	    SELECT
+	    	   COUNT(*) COUNT
+          FROM 
+          	   QNA
+         WHERE
+          	   STATUS='Y'
+	</entry>
+	
+	<entry key="selectQnaList">
+		SELECT *
+		  FROM (SELECT ROWNUM RNUM, A.*
+		          FROM (SELECT QNA_NO, NICKNAME, QNA_TITLE, QNA_DATE, ANSWER
+		                  FROM QNA Q 
+		                  JOIN MEMBER ON (QNA_WRITER = USER_NO) 
+		                 WHERE Q.STATUS = 'Y' 
+		                 ORDER BY QNA_DATE DESC) A)
+		 WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="insertQna">
+		INSERT INTO QNA(QNA_NO, QNA_WRITER, QNA_TITLE, QNA_CONTENT)
+		VALUES(SEQ_QNO.NEXTVAL, ?, ?, ?)
+	</entry>
+	
+	<entry key="selectQna">
+		SELECT 
+			   QNA_NO,
+			   NICKNAME,
+               QNA_TITLE,
+               QNA_CONTENT,
+			   QNA_DATE,
+               ANSWER,
+               ANSWER_DATE
+		  FROM 
+		  	   QNA Q 
+		  JOIN 
+		  	   MEMBER ON(QNA_WRITER = USER_NO) 
+		 WHERE 
+		 	   QNA_NO = ?
+	</entry>
+	
+	<entry key="deleteQna">
+		UPDATE
+			   QNA 
+		   SET
+			   STATUS = 'N' 
+		 WHERE 
+		 	   QNA_NO = ?
+	</entry>
+	
+	<entry key="updateQna">
+		UPDATE
+			   QNA 
+		   SET
+			   QNA_TITLE = ?,
+			   QNA_CONTENT=? 
+		 WHERE 
+		 	   QNA_NO = ?
+		   AND
+		   	   STATUS = 'Y'
+	</entry>
+	
+	<entry key="insertAnswer">
+		UPDATE
+			   QNA 
+		   SET
+			   ANSWER = ?,
+			   ANSWER_DATE = SYSDATE
+		 WHERE 
+		 	   QNA_NO = ?
+	</entry>
+	
+	<entry key="updateAnswer">
+		UPDATE
+			   QNA 
+		   SET
+			   ANSWER = ?
+		 WHERE 
+		 	   QNA_NO = ?
+	</entry>
+	
+
+</properties>
