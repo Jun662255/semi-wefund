@@ -9,6 +9,6 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_302"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="start"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dcatalina.base=&quot;C:\Workspace\semi--wef\.metadata\.plugins\org.eclipse.wst.server.core\tmp0&quot; -Dcatalina.home=&quot;C:\dev\apache-tomcat-8.5.79&quot; -Dwtp.deploy=&quot;C:\Workspace\semi--wef&quot; -Djava.endorsed.dirs=&quot;C:\dev\apache-tomcat-8.5.79\endorsed&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dcatalina.base=&quot;C:\Workspace\SemiProject-WeFunD\semi-wefund\.metadata\.plugins\org.eclipse.wst.server.core\tmp0&quot; -Dcatalina.home=&quot;C:\dev\apache-tomcat-8.5.79&quot; -Dwtp.deploy=&quot;C:\Workspace\SemiProject-WeFunD\semi-wefund&quot; -Djava.endorsed.dirs=&quot;C:\dev\apache-tomcat-8.5.79\endorsed&quot;"/>
 <stringAttribute key="server-id" value="Tomcat v8.5 Server at localhost"/>
 </launchConfiguration>

@@ -19,8 +19,8 @@ import com.kh.member.model.vo.Member;
 public class MemberUpdateController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-	* @see HttpServlet#HttpServlet()
+    /**/
+     * @see HttpServlet#HttpServlet()
      */
     public MemberUpdateController() {
         super();
