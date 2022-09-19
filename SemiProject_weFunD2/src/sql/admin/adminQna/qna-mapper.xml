@@ -17,7 +17,8 @@
     SELECT QNA_NO,
            QNA_TITLE,
            NICKNAME,
-           QNA_DATE         	   
+           QNA_DATE,
+           ANSWER
 	  FROM 
 	  	   QNA Q 
 	  JOIN	   

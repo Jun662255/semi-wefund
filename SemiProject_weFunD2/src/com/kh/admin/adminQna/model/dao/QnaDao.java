@@ -75,7 +75,8 @@ public class QnaDao {
 				Qna n = new Qna(rset.getInt("QNA_NO"),
 								rset.getString("QNA_TITLE"),
 								rset.getString("NICKNAME"),
-								rset.getString("QNA_DATE"));
+								rset.getString("QNA_DATE"),
+								rset.getString("ANSWER"));
 
 				list.add(n);
 

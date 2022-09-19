@@ -16,18 +16,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Q&A</title>
-
-
-
-
-    
     <style>
-	
-
-
-
-
-
+	.answered{color: rgb(63, 74, 224);}
     </style>
 </head>
 <body>
@@ -43,8 +33,9 @@
             <table class="table">
                 <tr>
                     <th width="150px">글 번호</th>
-                    <th width="600px">글 제목</th>                    
+                    <th width="500px">글 제목</th>                    
                     <th width="150px">작성자</th>
+                    <th width="100px">답변상태</th>
                     <th width="200px">작성일</th>
                 </tr>
                 
@@ -62,6 +53,11 @@
 		                    	</a>	                    
 		                    </td>                            
 		                    <td> <%= q.getQnaWriter() %></td>
+		                    <% if(q.getAnswer() == null) { %>
+		                    	<td>접수</td>
+		                    <% } else { %>
+		                    	<td class="answered">답변완료</td>
+		                    <% } %>
 		                    <td> <%= q.getQnaDate().substring(0,10) %></td>
 		                </tr>                    
 	            	<% } %>    
@@ -70,8 +66,7 @@
     	</div>        
 	</div>
         <div class="selectPage">
-            
-            <div >
+            <div>
             <% if (currentPage != 1) { %>
 	            <button  onclick="location.href='<%= contextPath %>/adminlist.qna?cpage=<%= currentPage -1 %>'" class="btn  btnYellow">&lt;</button>
 	        <% } %>
@@ -89,9 +84,7 @@
 			<% } %>    
             </div>
         </div>
-   	<% } else { %>
 	<% } %>
-    </div>
     <br clear="both">
 	<%@ include file="/views/common/footer.jsp"%>
 </body>
