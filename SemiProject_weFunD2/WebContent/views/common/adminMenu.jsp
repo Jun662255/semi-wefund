@@ -59,8 +59,7 @@ input[id*="answer"]:checked+label img {
 
 .adminMenu {
 	float: left;
-	margin-left: 6%;
-
+	margin-left: 400px;
 	margin-top: 3%;
 	font-size: 25px;
 }
@@ -88,12 +87,6 @@ input[id*="answer"]:checked+label img {
 
 a {
 	text-decoration: none !important;
-}
-
-@media ( max-width : 1680px ) {
-	.adminMenu {
-		display: none;
-	}
 }
 
 <!--위-->
